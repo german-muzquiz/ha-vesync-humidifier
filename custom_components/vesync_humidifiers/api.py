@@ -53,13 +53,13 @@ class VesyncApiClient:
     async def async_get_data(self) -> Any:
         """Get data from the API."""
         if not self.vesync_manager:
-            self.vesync_manager = VeSync(self._username, self._password, "America/Monterrey", debug=False, redact=True)
-            if not await self._run_blocking_call(self.vesync_manager.login):
+            self.vesync_manager = VeSync(self._username, self._password, "America/Monterrey", debug=True, redact=True)
+            if not await self.run_blocking_call(self.vesync_manager.login):
                 raise VesyncApiAuthenticationError("Invalid credentials")
 
-        await self._run_blocking_call(self.vesync_manager.update)
+        await self.run_blocking_call(self.vesync_manager.update)
         return self.vesync_manager.fans
 
-    async def _run_blocking_call(self, f, *args):
+    async def run_blocking_call(self, f, *args):
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, f, *args)

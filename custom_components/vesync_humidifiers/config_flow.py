@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_TIME_ZONE, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.helpers import selector
 from slugify import slugify
 
@@ -33,7 +33,6 @@ class VesyncFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 await self._test_credentials(
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
-                    timezone=user_input[CONF_TIME_ZONE],
                 )
             except VesyncApiAuthenticationError as exception:
                 LOGGER.warning(exception)
@@ -74,24 +73,15 @@ class VesyncFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             type=selector.TextSelectorType.PASSWORD,
                         ),
                     ),
-                    vol.Required(
-                        CONF_TIME_ZONE,
-                        default=(user_input or {}).get(CONF_TIME_ZONE, vol.UNDEFINED),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT,
-                        ),
-                    ),
                 },
             ),
             errors=_errors,
         )
 
-    async def _test_credentials(self, username: str, password: str, timezone: str) -> None:
+    async def _test_credentials(self, username: str, password: str) -> None:
         """Validate credentials."""
         client = VesyncApiClient(
             username=username,
             password=password,
-            timezone=timezone,
         )
         await client.async_get_data()

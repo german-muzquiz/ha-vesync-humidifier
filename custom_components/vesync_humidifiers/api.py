@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any, Optional
 
 import aiohttp
@@ -37,23 +38,22 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
 class VesyncApiClient:
     """Vesync API Client."""
 
-    vesync_manager: Optional[VeSync]
+    vesync_manager: Optional[VeSync] = None
 
     def __init__(
         self,
         username: str,
         password: str,
-        timezone: str,
     ) -> None:
         """Vesync API Client."""
         self._username = username
         self._password = password
-        self._timezone = timezone
+        self.vesync_manager = None
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
         if not self.vesync_manager:
-            self.vesync_manager = VeSync(self._username, self._password, self._timezone, debug=False, redact=True)
+            self.vesync_manager = VeSync(self._username, self._password, os.getenv("TZ"), debug=False, redact=True)
             if not self.vesync_manager.login():
                 raise VesyncApiAuthenticationError("Invalid credentials")
 

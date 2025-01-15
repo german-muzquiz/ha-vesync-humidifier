@@ -1,4 +1,4 @@
-"""Sample API Client."""
+"""VeSync API Client."""
 
 from __future__ import annotations
 
@@ -35,19 +35,17 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     response.raise_for_status()
 
 
-class IntegrationBlueprintApiClient:
+class VesyncApiClient:
     """Sample API Client."""
 
     def __init__(
         self,
         username: str,
         password: str,
-        session: aiohttp.ClientSession,
     ) -> None:
         """Sample API Client."""
         self._username = username
         self._password = password
-        self._session = session
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
@@ -75,14 +73,15 @@ class IntegrationBlueprintApiClient:
         """Get information from the API."""
         try:
             async with async_timeout.timeout(10):
-                response = await self._session.request(
-                    method=method,
-                    url=url,
-                    headers=headers,
-                    json=data,
-                )
-                _verify_response_or_raise(response)
-                return await response.json()
+                # response = await self._session.request(
+                #     method=method,
+                #     url=url,
+                #     headers=headers,
+                #     json=data,
+                # )
+                # _verify_response_or_raise(response)
+                # return await response.json()
+                return None
 
         except TimeoutError as exception:
             msg = f"Timeout error fetching information - {exception}"

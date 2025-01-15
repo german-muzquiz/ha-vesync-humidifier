@@ -1,0 +1,12 @@
+{
+  "domain": "vesync_humidifiers",
+  "name": "VeSync Humidifiers",
+  "codeowners": [
+    "@german-muzquiz"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/german-muzquiz/ha-vesync-humidifier",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/german-muzquiz/ha-vesync-humidifier/issues",
+  "version": "0.0.1"
+}

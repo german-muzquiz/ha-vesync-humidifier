@@ -1,0 +1,82 @@
+[project]
+name = "ha-vesync-humidifier"
+version = "0.0.1.dev0"
+requires-python = ">=3.12"
+readme = "README.md"
+dependencies = [
+    "colorlog==6.9.0",
+    "homeassistant==2024.11.0",
+    "pip>=21.3.1",
+    "pydantic>=2.10.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/german-muzquiz/ha-vesync-humidifier"
+Documentation = "https://github.com/german-muzquiz/ha-vesync-humidifier"
+Repository = "https://github.com/german-muzquiz/ha-vesync-humidifier"
+
+# Dependencies used only for development
+[dependency-groups]
+dev = [
+    "mypy-extensions>=1.0.0",
+    "mypy~=1.13.0",
+    "pylint~=3.3.1",
+    "ruff~=0.8.0",
+    "types-requests<2.31.0.20241016",
+    "python-dotenv~=1.0",
+]
+
+[[tool.uv.index]]
+name = "pipi"
+url = "https://pypi.org/simple"
+
+[tool.mypy]
+python_version = "3.12"
+namespace_packages = false
+disable_error_code = "call-arg,misc"
+plugins = "pydantic.mypy"
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+]
+
+[tool.ruff]
+line-length = 120
+exclude = [
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "site-packages",
+    "venv",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+select = ["PL", "F", "I", "E", "W", "C90"]
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.pylint]
+allow-magic-value-types = ["str", "bytes", "int"]
+max-args = 7
+max-bool-expr = 5
+max-branches = 12
+max-locals = 15
+

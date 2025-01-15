@@ -1,24 +1,24 @@
-"""Switch platform for integration_blueprint."""
+"""Humidifier platform for vesync_humidifiers."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
+from homeassistant.components.humidifier import HumidifierEntity, HumidifierEntityDescription
 
-from .entity import IntegrationBlueprintEntity
+from .entity import VesyncEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .coordinator import BlueprintDataUpdateCoordinator
-    from .data import IntegrationBlueprintConfigEntry
+    from .coordinator import VesyncDataUpdateCoordinator
+    from .data import VesyncConfigEntry
 
 ENTITY_DESCRIPTIONS = (
-    SwitchEntityDescription(
-        key="integration_blueprint",
-        name="Integration Switch",
+    HumidifierEntityDescription(
+        key="vesync_humidifier",
+        name="VeSync Humidifier",
         icon="mdi:format-quote-close",
     ),
 )
@@ -26,12 +26,12 @@ ENTITY_DESCRIPTIONS = (
 
 async def async_setup_entry(
     hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
-    entry: IntegrationBlueprintConfigEntry,
+    entry: VesyncConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the switch platform."""
     async_add_entities(
-        IntegrationBlueprintSwitch(
+        VesyncHumidifier(
             coordinator=entry.runtime_data.coordinator,
             entity_description=entity_description,
         )
@@ -39,15 +39,15 @@ async def async_setup_entry(
     )
 
 
-class IntegrationBlueprintSwitch(IntegrationBlueprintEntity, SwitchEntity):
-    """integration_blueprint switch class."""
+class VesyncHumidifier(VesyncEntity, HumidifierEntity):
+    """vesync_humidifier class."""
 
     def __init__(
         self,
-        coordinator: BlueprintDataUpdateCoordinator,
-        entity_description: SwitchEntityDescription,
+        coordinator: VesyncDataUpdateCoordinator,
+        entity_description: HumidifierEntityDescription,
     ) -> None:
-        """Initialize the switch class."""
+        """Initialize the humidifier class."""
         super().__init__(coordinator)
         self.entity_description = entity_description
 
@@ -57,11 +57,11 @@ class IntegrationBlueprintSwitch(IntegrationBlueprintEntity, SwitchEntity):
         return self.coordinator.data.get("title", "") == "foo"
 
     async def async_turn_on(self, **_: Any) -> None:
-        """Turn on the switch."""
+        """Turn on the humidifier."""
         await self.coordinator.config_entry.runtime_data.client.async_set_title("bar")
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **_: Any) -> None:
-        """Turn off the switch."""
+        """Turn off the humidifier."""
         await self.coordinator.config_entry.runtime_data.client.async_set_title("foo")
         await self.coordinator.async_request_refresh()

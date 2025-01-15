@@ -51,6 +51,8 @@ class VesyncHumidifier(VesyncEntity, HumidifierEntity):
                     humidifier.cid,
                 ),
             },
+            name=humidifier.device_name,
+            model=humidifier.device_type,
         )
         self.entity_description = HumidifierEntityDescription(
             key=f"vesync_humidifier_{humidifier.cid}",
@@ -69,8 +71,10 @@ class VesyncHumidifier(VesyncEntity, HumidifierEntity):
         """Turn on the humidifier."""
         if not await self.coordinator.config_entry.runtime_data.client.run_blocking_call(self.humidifier.turn_on):
             raise VesyncApiClientCommunicationError("Unable to turn on the humidifier")
+        await self.coordinator.config_entry.runtime_data.client.run_blocking_call(self.humidifier.update)
 
     async def async_turn_off(self, **_: Any) -> None:
         """Turn off the humidifier."""
         if not await self.coordinator.config_entry.runtime_data.client.run_blocking_call(self.humidifier.turn_off):
             raise VesyncApiClientCommunicationError("Unable to turn off the humidifier")
+        await self.coordinator.config_entry.runtime_data.client.run_blocking_call(self.humidifier.update)

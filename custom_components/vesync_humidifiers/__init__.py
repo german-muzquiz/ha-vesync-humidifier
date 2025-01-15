@@ -15,13 +15,13 @@ from homeassistant.loader import async_get_loaded_integration
 
 from .api import VesyncApiClient
 from .const import DOMAIN, LOGGER
-from .coordinator import VesyncHumidifiersDataUpdateCoordinator
-from .data import VeSyncHumidifiersData
+from .coordinator import VesyncDataUpdateCoordinator
+from .data import VesyncData
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
-    from .data import VeSyncHumidifiersConfigEntry
+    from .data import VesyncConfigEntry
 
 PLATFORMS: list[Platform] = [
     Platform.HUMIDIFIER,
@@ -31,16 +31,16 @@ PLATFORMS: list[Platform] = [
 # https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: VeSyncHumidifiersConfigEntry,
+    entry: VesyncConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
-    coordinator = VesyncHumidifiersDataUpdateCoordinator(
+    coordinator = VesyncDataUpdateCoordinator(
         hass=hass,
         logger=LOGGER,
         name=DOMAIN,
         update_interval=timedelta(hours=1),
     )
-    entry.runtime_data = VeSyncHumidifiersData(
+    entry.runtime_data = VesyncData(
         client=VesyncApiClient(
             username=entry.data[CONF_USERNAME],
             password=entry.data[CONF_PASSWORD],
@@ -60,7 +60,7 @@ async def async_setup_entry(
 
 async def async_unload_entry(
     hass: HomeAssistant,
-    entry: VeSyncHumidifiersConfigEntry,
+    entry: VesyncConfigEntry,
 ) -> bool:
     """Handle removal of an entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
@@ -68,7 +68,7 @@ async def async_unload_entry(
 
 async def async_reload_entry(
     hass: HomeAssistant,
-    entry: VeSyncHumidifiersConfigEntry,
+    entry: VesyncConfigEntry,
 ) -> None:
     """Reload config entry."""
     await async_unload_entry(hass, entry)

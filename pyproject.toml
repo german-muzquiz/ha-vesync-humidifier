@@ -8,6 +8,7 @@ dependencies = [
     "homeassistant==2024.11.0",
     "pip>=21.3.1",
     "pydantic>=2.10.5",
+    "pyvesync>=2.1.15",
 ]
 
 [project.urls]
@@ -39,6 +40,8 @@ plugins = "pydantic.mypy"
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = [
+    "pyvesync.*",
+    "pyvesync",
 ]
 
 [tool.ruff]

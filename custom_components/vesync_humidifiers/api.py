@@ -2,25 +2,24 @@
 
 from __future__ import annotations
 
-import socket
-from typing import Any
+from typing import Any, Optional
 
 import aiohttp
-import async_timeout
+from pyvesync import VeSync
 
 
-class IntegrationBlueprintApiClientError(Exception):
+class VesyncApiClientError(Exception):
     """Exception to indicate a general API error."""
 
 
-class IntegrationBlueprintApiClientCommunicationError(
-    IntegrationBlueprintApiClientError,
+class VesyncApiClientCommunicationError(
+    VesyncApiClientError,
 ):
     """Exception to indicate a communication error."""
 
 
-class IntegrationBlueprintApiClientAuthenticationError(
-    IntegrationBlueprintApiClientError,
+class VesyncApiAuthenticationError(
+    VesyncApiClientError,
 ):
     """Exception to indicate an authentication error."""
 
@@ -29,72 +28,34 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     """Verify that the response is valid."""
     if response.status in (401, 403):
         msg = "Invalid credentials"
-        raise IntegrationBlueprintApiClientAuthenticationError(
+        raise VesyncApiAuthenticationError(
             msg,
         )
     response.raise_for_status()
 
 
 class VesyncApiClient:
-    """Sample API Client."""
+    """Vesync API Client."""
+
+    vesync_manager: Optional[VeSync]
 
     def __init__(
         self,
         username: str,
         password: str,
+        timezone: str,
     ) -> None:
-        """Sample API Client."""
+        """Vesync API Client."""
         self._username = username
         self._password = password
+        self._timezone = timezone
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
-        return await self._api_wrapper(
-            method="get",
-            url="https://jsonplaceholder.typicode.com/posts/1",
-        )
+        if not self.vesync_manager:
+            self.vesync_manager = VeSync(self._username, self._password, self._timezone, debug=False, redact=True)
+            if not self.vesync_manager.login():
+                raise VesyncApiAuthenticationError("Invalid credentials")
 
-    async def async_set_title(self, value: str) -> Any:
-        """Get data from the API."""
-        return await self._api_wrapper(
-            method="patch",
-            url="https://jsonplaceholder.typicode.com/posts/1",
-            data={"title": value},
-            headers={"Content-type": "application/json; charset=UTF-8"},
-        )
-
-    async def _api_wrapper(
-        self,
-        method: str,
-        url: str,
-        data: dict | None = None,
-        headers: dict | None = None,
-    ) -> Any:
-        """Get information from the API."""
-        try:
-            async with async_timeout.timeout(10):
-                # response = await self._session.request(
-                #     method=method,
-                #     url=url,
-                #     headers=headers,
-                #     json=data,
-                # )
-                # _verify_response_or_raise(response)
-                # return await response.json()
-                return None
-
-        except TimeoutError as exception:
-            msg = f"Timeout error fetching information - {exception}"
-            raise IntegrationBlueprintApiClientCommunicationError(
-                msg,
-            ) from exception
-        except (aiohttp.ClientError, socket.gaierror) as exception:
-            msg = f"Error fetching information - {exception}"
-            raise IntegrationBlueprintApiClientCommunicationError(
-                msg,
-            ) from exception
-        except Exception as exception:  # pylint: disable=broad-except
-            msg = f"Something really wrong happened! - {exception}"
-            raise IntegrationBlueprintApiClientError(
-                msg,
-            ) from exception
+        self.vesync_manager.update()
+        return self.vesync_manager.fans

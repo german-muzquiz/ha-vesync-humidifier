@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.const import CONF_PASSWORD, CONF_TIME_ZONE, CONF_USERNAME, Platform
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import VesyncApiClient
@@ -44,6 +44,7 @@ async def async_setup_entry(
         client=VesyncApiClient(
             username=entry.data[CONF_USERNAME],
             password=entry.data[CONF_PASSWORD],
+            timezone=entry.data[CONF_TIME_ZONE],
         ),
         integration=async_get_loaded_integration(hass, entry.domain),
         coordinator=coordinator,

@@ -7,14 +7,12 @@ https://github.com/german-muzquiz/ha-vesync-humidifier
 
 from __future__ import annotations
 
-from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import VesyncApiClient
-from .const import DOMAIN, LOGGER
 from .coordinator import VesyncDataUpdateCoordinator
 from .data import VesyncData
 
@@ -36,9 +34,6 @@ async def async_setup_entry(
     """Set up this integration using UI."""
     coordinator = VesyncDataUpdateCoordinator(
         hass=hass,
-        logger=LOGGER,
-        name=DOMAIN,
-        update_interval=timedelta(seconds=30),
     )
     entry.runtime_data = VesyncData(
         client=VesyncApiClient(

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.exceptions import ConfigEntryAuthFailed
@@ -13,8 +14,10 @@ from .api import (
 )
 
 if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
+
     from .data import VesyncConfigEntry
-from .const import LOGGER
+from .const import DOMAIN, LOGGER, SCAN_INTERVAL
 
 
 # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
@@ -23,8 +26,20 @@ class VesyncDataUpdateCoordinator(DataUpdateCoordinator):
 
     config_entry: VesyncConfigEntry
 
-    async def _async_update_data(self) -> Any:
-        """Update data via library."""
+    def __init__(self, hass: HomeAssistant) -> None:
+        """Initialize the coordinator."""
+        super().__init__(
+            hass,
+            LOGGER,
+            name=DOMAIN,
+            update_interval=timedelta(seconds=SCAN_INTERVAL),
+        )
+
+    async def _async_update_data(self) -> dict[str, Any]:
+        """
+        Update data via library.
+        Data: dictionary of humidifer cid and humidifier instance as returned by vesync API.
+        """
         try:
             LOGGER.info("Updating data")
             return await self.config_entry.runtime_data.client.async_get_data()

@@ -61,7 +61,7 @@ class VesyncApiClient:
                 raise VesyncApiAuthenticationError("Invalid credentials")
 
         await self.run_blocking_call(self.vesync_manager.update)
-        return self.vesync_manager.fans
+        return {h.cid: h for h in self.vesync_manager.fans}
 
     async def run_blocking_call(self, f, *args):
         LOGGER.info("Running blocking call")

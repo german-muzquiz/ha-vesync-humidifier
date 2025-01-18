@@ -43,9 +43,9 @@ class VesyncHumidifier(VesyncEntity, HumidifierEntity):
         humidifier: Any,  # Data coming from vesync api
     ) -> None:
         """Initialize the humidifier class."""
-        super().__init__(coordinator, self._on_refresh)
-        coordinator.async_add_listener()
+        super().__init__(coordinator)
         self._attr_unique_id = humidifier.cid
+        coordinator.async_add_listener()
         self._on_refresh()
 
     def _on_refresh(self):

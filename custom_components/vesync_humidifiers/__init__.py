@@ -38,7 +38,7 @@ async def async_setup_entry(
         hass=hass,
         logger=LOGGER,
         name=DOMAIN,
-        update_interval=timedelta(minutes=5),
+        update_interval=timedelta(seconds=30),
     )
     entry.runtime_data = VesyncData(
         client=VesyncApiClient(

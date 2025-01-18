@@ -8,6 +8,8 @@ from typing import Any, Optional
 import aiohttp
 from pyvesync import VeSync
 
+from .const import LOGGER
+
 
 class VesyncApiClientError(Exception):
     """Exception to indicate a general API error."""
@@ -52,8 +54,9 @@ class VesyncApiClient:
 
     async def async_get_data(self) -> Any:
         """Get data from the API."""
+        LOGGER.info("Getting data from API")
         if not self.vesync_manager:
-            self.vesync_manager = VeSync(self._username, self._password, "America/Monterrey", debug=True, redact=True)
+            self.vesync_manager = VeSync(self._username, self._password, "America/Monterrey", debug=False, redact=True)
             if not await self.run_blocking_call(self.vesync_manager.login):
                 raise VesyncApiAuthenticationError("Invalid credentials")
 
@@ -61,5 +64,6 @@ class VesyncApiClient:
         return self.vesync_manager.fans
 
     async def run_blocking_call(self, f, *args):
+        LOGGER.info("Running blocking call")
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, f, *args)

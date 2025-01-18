@@ -14,6 +14,7 @@ from .api import (
 
 if TYPE_CHECKING:
     from .data import VesyncConfigEntry
+from .const import LOGGER
 
 
 # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
@@ -25,6 +26,7 @@ class VesyncDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> Any:
         """Update data via library."""
         try:
+            LOGGER.info("Updating data")
             return await self.config_entry.runtime_data.client.async_get_data()
         except VesyncApiAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception
